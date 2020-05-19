@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.palette.dao.AdminStatisticsDao">
+
+<select id="getMemberGenderInfo" resultType="com.palette.model.MemberDto" >
+    SELECT *    <!-- MEMBER_ID, MEMBER_NAME, AGE -->
+    FROM MEMBER
+    WHERE (AUTH=0 OR AUTH=1);
+</select>
+
+
+<select id="practice" resultType="com.palette.model.GroupDto" >
+    
+    SELECT GI.GROUP_INFO_SEQ, 
+            GI.INTER_BIG_SEQ, IB.BIG_NAME, 
+            GI.INTER_SMALL_SEQ, ISM.SMALL_NAME, 
+            GI.GROUP_NAME
+
+    FROM GROUP_INFO GI
+    JOIN INTER_BIG IB
+            ON GI.INTER_BIG_SEQ = IB.INTER_BIG_SEQ
+    JOIN INTER_SMALL ISM
+        ON GI.INTER_SMALL_SEQ = ISM.INTER_SMALL_SEQ
+    
+
+    <!-- 1	1	대학생/취업	1	공기업	group1 -->
+</select>
+
+
+
+
+
+<select id="receiveinterBigCountAll" resultType="HashMap">
+<!-- '대학생/취업', '공무원임용', '어학/회화', '라이프/취미' 순서 -->
+SELECT 
+	COUNT(CASE WHEN INTER_BIG_SEQ=1 THEN 1 END) AS 'value1', 
+    COUNT(CASE WHEN INTER_BIG_SEQ=2 THEN 1 END) AS 'value2', 
+    COUNT(CASE WHEN INTER_BIG_SEQ=3 THEN 1 END) AS 'value3', 
+    COUNT(CASE WHEN INTER_BIG_SEQ=4 THEN 1 END) AS 'value4'
+FROM GROUP_INFO
+
+</select>
+
+
+<select id="receiveinterSmall_1" resultType="HashMap">
+    <!-- '대학생/취업' -->
+
+    SELECT s.SMALL_NAME, count(*) as smallTotal
+    FROM FINAL.GROUP_INFO i
+    join INTER_SMALL s
+    on i.INTER_SMALL_SEQ = s.INTER_SMALL_SEQ 
+    where i.INTER_BIG_SEQ=1 group by i.INTER_SMALL_SEQ
+</select>
+
+
+<select id="receiveinterSmall_2" resultType="HashMap">
+    <!-- '공무원임용'-->
+    SELECT s.SMALL_NAME, count(*) as smallTotal
+    FROM FINAL.GROUP_INFO i
+    join INTER_SMALL s
+    on i.INTER_SMALL_SEQ = s.INTER_SMALL_SEQ 
+    where i.INTER_BIG_SEQ=2 group by i.INTER_SMALL_SEQ
+
+</select>
+
+
+<select id="receiveinterSmall_3" resultType="HashMap">
+    <!-- '어학/회화' -->
+
+    SELECT s.SMALL_NAME, count(*) as smallTotal
+    FROM FINAL.GROUP_INFO i
+    join INTER_SMALL s
+    on i.INTER_SMALL_SEQ = s.INTER_SMALL_SEQ 
+    where i.INTER_BIG_SEQ=3 group by i.INTER_SMALL_SEQ
+
+</select>
+
+<select id="receiveinterSmall_4" resultType="HashMap">
+    <!-- '라이프/취미' -->
+
+    SELECT s.SMALL_NAME, count(*) as smallTotal
+    FROM FINAL.GROUP_INFO i
+    join INTER_SMALL s
+    on i.INTER_SMALL_SEQ = s.INTER_SMALL_SEQ 
+    where i.INTER_BIG_SEQ=4 group by i.INTER_SMALL_SEQ
+
+</select>
+
+
+	
+	
+
+
+</mapper>

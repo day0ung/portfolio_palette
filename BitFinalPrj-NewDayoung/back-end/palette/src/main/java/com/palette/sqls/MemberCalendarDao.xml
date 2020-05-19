@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.palette.dao.MemberCalendarDao">
+<!-- groupseq default =0, auth = 0 -->
+	<!-- 일정 정보뿌리기 -->
+	<select id="getMemberCalendar" parameterType="com.palette.model.CalendarDto" resultType="com.palette.model.CalendarDto">
+		select * 
+		from FINAL.CALENDAR
+		where MEMBER_SEQ = #{memberSeq} and AUTH=0;
+	</select>
+	<!-- 일정등록 -->
+	<insert id="insertMemberCalendar" parameterType="com.palette.model.CalendarDto">
+	insert into CALENDAR(MEMBER_SEQ,GROUP_INFO_SEQ,TITLE,CONTENT,START,END,COLOR,AUTH)
+	values (#{memberSeq}, 0, #{title}, #{content}, #{start}, #{end}, #{color}, 0);
+	</insert>
+	<!-- 일정삭제 -->
+	<delete id="deleteMemberCalendar" parameterType="java.lang.Integer">
+		delete from FINAL.CALENDAR
+		where CALENDAR_SEQ = #{calendarSeq}
+	</delete>
+	<!-- 일정수정 -->
+	<update id="updateMemberCalendar" parameterType="com.palette.model.CalendarDto">
+		update FINAL.CALENDAR
+		set START = #{start}, END = #{end}, TITLE=#{title}, CONTENT=#{content}, COLOR=#{color}
+		where CALENDAR_SEQ =#{calendarSeq}
+	</update>
+	
+	<!-- 일정날짜변경 -->
+	<update id="updateDateCalendar" parameterType="com.palette.model.CalendarDto">
+		update FINAL.CALENDAR
+		set START = #{start}, END = #{end}
+		where CALENDAR_SEQ =#{calendarSeq}
+	</update>
+</mapper>

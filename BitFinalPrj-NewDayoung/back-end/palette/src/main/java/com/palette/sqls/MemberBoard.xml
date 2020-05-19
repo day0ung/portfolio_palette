@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.palette.dao.MemberBoardDao">
+
+ <!--전체 select -->
+ <select id="getMemberBoard" parameterType="com.palette.model.MemberBoardDto" resultType="com.palette.model.MemberBoardDto">
+	select @rownum:=@rownum+1 as rowNum, b.*, m.MEMBER_ID
+	from BOARD b 
+	join MEMBER m
+	on b.MEMBER_SEQ = m.MEMBER_SEQ
+	where (@rownum:=0)=0 and b.del = 0 and b.BOARD_AUTH=0 and b.CATEGORY=2
+         	and b.MEMBER_SEQ=#{memberSeq}
+	order by b.WRITE_DATE desc, rowNum asc
+ </select>
+ 
+ <!--게시판 글쓰기 -->
+ <insert id="writeBoard" parameterType="com.palette.model.MemberBoardDto">
+ insert into BOARD(MEMBER_SEQ, TITLE, CONTENT, WRITE_DATE, DEL, BOARD_AUTH, CATEGORY )
+ values(#{memberSeq}, #{title}, #{content}, now(),0, 0 ,2)
+ </insert>
+ 
+ <!--게시판 seq -->
+ <select id="currBoardSeq" resultType="java.lang.Integer">
+     SELECT max(BOARD_SEQ)
+     FROM BOARD
+ </select>
+ 
+  <!--자료실 글쓰기 -->
+ <insert id="writeLibrary" parameterType="com.palette.model.BoardReferenceDto">
+ INSERT INTO BOARD_REFERENCE(BOARD_SEQ, MEMBER_SEQ, URL, FILE_NAME)
+ VALUES (#{boardSeq}, #{memberSeq}, #{url}, #{fileName})
+ </insert>
+ 
+ <!-- 자료실 상세보기 -->
+ <select id="detailLibarary" parameterType="java.lang.Integer" resultType="com.palette.model.MemberBoardDto">
+	select  b.*, m.MEMBER_ID
+	from BOARD b 
+	join MEMBER m
+	on b.MEMBER_SEQ = m.MEMBER_SEQ
+	where BOARD_SEQ= #{boardSeq} and b.BOARD_AUTH=0 and b.CATEGORY=2
+ </select>
+ 
+ <!-- 자료실상세보기, 파일 -->
+ <select id="detailFile" parameterType="com.palette.model.BoardReferenceDto" resultType="com.palette.model.BoardReferenceDto">
+ 	select * from BOARD_REFERENCE where MEMBER_SEQ=#{memberSeq} and BOARD_SEQ = #{boardSeq} and DEL =0;
+ </select>
+
+ <!-- 자료실삭제 -->
+ <update id="memberBoardDel" parameterType="java.lang.Integer">
+ 	UPDATE BOARD
+	SET DEL=1
+	WHERE BOARD_SEQ=#{boardSeq}
+ </update>
+ 
+ <!-- 자료실 수정전 삭제 -->
+ <update id="memberReferenceDelete" parameterType="java.lang.Integer">
+		UPDATE BOARD_REFERENCE
+		SET DEL = 1
+		WHERE BOARD_SEQ = #{boardSeq}
+ </update>
+ 
+ <!-- 자료실수정 -->
+ <update id="memberBoardUpdate" parameterType="com.palette.model.MemberBoardDto">
+ 	UPDATE BOARD
+	SET TITLE = #{title}, CONTENT = #{content}
+	WHERE BOARD_SEQ = #{boardSeq}
+ </update>
+ 
+ 
+ 
+</mapper>
